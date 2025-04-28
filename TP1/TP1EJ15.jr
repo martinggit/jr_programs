@@ -1,0 +1,63 @@
+import edu.ucdavis.jr.JR;
+
+// Simula test_and_set
+class Lock {
+    private boolean lock = false;
+
+    public synchronized boolean testAndSet() {
+        boolean old = lock;
+        lock = true;
+        return old;
+    }
+
+    public synchronized void unlock() {
+        lock = false;
+    }
+}
+
+public class TP1EJ15 {
+    private static float a = 2;
+    private static float b = 4; // ejemplo para que funcione el calculo
+    private static float x;
+
+    private static Lock spinLock = new Lock();
+
+    private static process p1 {
+        while (true) {
+            // protocolo entrada
+            while (spinLock.testAndSet()) {
+                // spin
+            }
+            // seccion critica
+            x = 3 * a * b;
+            System.out.println("p1: " + x);
+            // protocolo salida
+            spinLock.unlock();
+            break; // terminamos despues de una vuelta para no hacer bucle infinito
+        }
+    }
+
+    private static process p2 {
+        while (true) {
+            while (spinLock.testAndSet()) {
+                // spin
+            }
+            x = a + b;
+            System.out.println("p2: " + x);
+            spinLock.unlock();
+            break;
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            JR.registerQuiescenceAction(done);
+        } catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static op void done() {
+        System.out.println("Todos los procesos terminaron.");
+    }
+}

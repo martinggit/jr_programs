@@ -1,0 +1,85 @@
+import edu.ucdavis.jr.JR;
+import java.util.LinkedList;
+
+public class ProductorConsumidor{
+
+    public static final int N = 20; //maximo de elementos
+    public static final int S = 30;
+    //recursos compartidos
+    public static LinkedList<Integer> buffer;
+    private static int turnoProductor = 0;
+    private static int turnoConsumidor = 0;
+
+    private process Productor{
+        int numero = 0;
+        for(int i = 0; i < S; i++){
+            //protocolo de entrada
+            turnoProductor = 1;
+            turnoProductor = turnoConsumidor + 1;
+            while(turnoConsumidor != 0 && turnoProductor > turnoConsumidor);//espera activa
+
+            //seccion critica
+            numero = (int) (Math.random()*50+1);
+            if(buffer.size() < N){
+                buffer.addLast(numero);
+                System.out.println("Elemento agregado: " + numero);
+                System.out.println("Turno consumidor: " + turnoConsumidor);
+                System.out.println("Turno productor: " + turnoProductor);
+            }
+            else{
+                System.out.println("El buffer esta lleno");
+            }
+
+            //protocolo de salida
+            turnoProductor = 0;
+        }
+
+    }
+
+    private process Consumidor{
+        int numero = 0;
+        for(int i = 0; i < S; i++){
+            //protocolo de entrada
+            turnoConsumidor = 1;
+            turnoConsumidor = turnoProductor + 1;
+            while(turnoProductor != 0 && turnoConsumidor >= turnoProductor);//espera activa
+
+            //seccion critica
+            if (!buffer.isEmpty()){
+                numero = buffer.removeLast();
+                System.out.println("Elemento removido: " + numero);
+                System.out.println("Turno consumidor: " + turnoConsumidor);
+                System.out.println("Turno productor: " + turnoProductor);               
+            }
+            else{
+                System.out.println("El buffer esta vacio");
+            }
+    
+            //protocolo de salida
+            turnoConsumidor = 0;
+        }
+
+    }
+
+    public static void main(String[] args) {   
+
+        buffer = new LinkedList<Integer>();
+
+        ProductorConsumidor pc = new ProductorConsumidor();
+
+        try {
+			JR.registerQuiescenceAction(terminado);
+		} catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {
+			//TODO: handle exception
+		}
+	}
+
+    //Este es el metodo registrado para ejecutarse como lo ultimo luego de que todos los procesos terminen.
+	private static op void terminado(){
+		System.out.println("finalizado");
+	}
+
+
+
+
+}

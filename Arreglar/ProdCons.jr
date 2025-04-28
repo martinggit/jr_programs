@@ -1,0 +1,83 @@
+/*
+Productor consumidor Buffer Acotado a N elementos
+donde un productor produce y un consumidor consume.
+
+1- borarr de ambos procesos esto: ((int i = 1; i <= N; i++))
+para que quede solo una instancia de cada proceso.
+2- Luego mostrar que pasaria si creamos muchos procesos.
+3- Como lo arreglamos??
+*/
+
+
+import edu.ucdavis.jr.JR;
+public class ProdCons{
+
+    public static int[] elementos;
+    private static final int CANTIDAD = 6;
+    private static int indiceProducido = 0;
+    private static int indiceConsumido = 0;
+    private static int cantidaProducidos = 0;
+    private static int N = 4;
+
+    private static sem mutex = 1;
+
+    private static op void pausa(int tiempo){
+        
+        try{
+                Thread.sleep(tiempo);
+        }catch(java.lang.Exception e){}
+
+    }
+
+
+    private process Productor((int i = 1; i <= N; i++)){
+
+        int elemento = 0;
+        
+        P(mutex);
+        while(indiceProducido < CANTIDAD ){
+        V(mutex);    
+            System.out.println("PROCESO Productor " + i + " insertara en posicion: " + indiceProducido);    
+            //pausa(3000);
+            P(mutex);    
+            elemento = (int) (Math.random()*3000+1);
+            elementos[indiceProducido] = elemento;
+            System.out.println("Prod: " +i +" - Produciendo elemento: " + elemento + " posicion: " + indiceProducido);
+            cantidaProducidos++;
+            indiceProducido++;
+            V(mutex);
+
+        }        
+    }
+
+    private process Consumidor((int i = 1; i <= N; i++)){
+        int elemento = 0;
+        
+        P(mutex);
+        while(indiceConsumido < CANTIDAD ){
+        V(mutex);    
+            System.out.println("PROCESO CONSUMIDOR " + i + " a consumir de posicion: " + indiceConsumido);
+            P(mutex);
+            if(cantidaProducidos > 0){
+                
+                elemento = elementos[indiceConsumido];     
+                System.out.println("Cons: " +i +" - Estoy en consumiendo " + elemento + " de posicion: " + indiceConsumido);                   
+                indiceConsumido++;
+                cantidaProducidos--;
+            }
+            System.out.println("indiceConsumido: " + indiceConsumido + " proceso:" + i  );  
+            V(mutex);
+        }
+        
+        
+    }
+
+    public static void main(String[] args ) {
+
+            elementos = new int[CANTIDAD];
+            System.out.println("Productor-Consumidor ");    
+
+            ProdCons proceso = new ProdCons();
+    }
+
+}

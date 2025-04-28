@@ -1,0 +1,48 @@
+import edu.ucdavis.jr.JR;
+
+public class TP1EJ17 {
+    private static int[] arreglo = {1, 4, 6, 2, 16, 67, 23, 97, 13};
+
+    private static int maxPar = 0;
+    private static int maxImpar = 0;
+
+private static process par {
+        for (int i = 0; i < arreglo.length; i++) {
+            if (i % 2 == 0) { // Indice par
+                System.out.println("Proceso PAR analiza Indice " + i + ", valor = " + arreglo[i]+ " - Max actual:("+maxPar+")");
+                if (arreglo[i] > maxPar) {
+                    maxPar = arreglo[i];
+                    System.out.println("Nuevo Maximo Par:"+maxPar);
+                }
+            }
+        }
+    }
+
+    private static process impar {
+        for (int i = 0; i < arreglo.length; i++) {
+            if (i % 2 != 0) { // Indice impar
+                System.out.println("Proceso IMPAR analiza Indice " + i + ", valor = " + arreglo[i]+ " - Max actual:("+maxImpar+")");
+                if (arreglo[i] > maxImpar) {
+                    maxImpar = arreglo[i];
+                     System.out.println("Nuevo Maximo Impar:"+maxImpar);
+                }
+            }
+        }
+    }
+
+    private static op void done() {
+        System.out.println("=== Resultados Finales ===");
+        System.out.println("Maximo en indices pares: " + maxPar);
+        System.out.println("Maximo en indices impares: " + maxImpar);
+        int maxTotal = Math.max(maxPar, maxImpar);
+        System.out.println("Maximo total en el arreglo: " + maxTotal);
+    }
+
+    public static void main(String[] args) {
+        try {
+            JR.registerQuiescenceAction(done);
+        } catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {
+            e.printStackTrace();
+        }
+    }
+}

@@ -1,0 +1,59 @@
+import edu.ucdavis.jr.JR;
+
+public class TP1EJ13{
+    private static float a = 2;
+    private static float b = 3;
+    private static float c = 8;
+    private static float d = 2;
+    private static float e = 4;
+    private static float f = 1;
+
+    private static float z;
+    private static float w;
+    private static float x;
+    private static float y;
+    private static float r;
+
+    private static process p1{
+        x = 3*a*b;
+        System.out.println("p1="+ x);
+    }
+    private static process p2{
+        y = 4;
+        System.out.println("p2="+ y);
+    }
+    private static process p3{
+        z =c-d;
+        System.out.println("p3="+ z);
+        if (w != 0) {
+            datosListos(z, w);
+        }
+    }
+
+    private static process p4{
+        w=e-f;
+        System.out.println("p4="+ w);
+        if (z != 0) {
+            datosListos(z, w);
+        }
+    }
+
+    private static op void datosListos(float zVal, float wVal) {
+        z = zVal;
+        w = wVal;
+        r = (float)Math.pow(z, w);
+        System.out.println("r = " + r);
+    }
+    
+    
+    public static void main(String[] args) {
+        try {
+			JR.registerQuiescenceAction(done);
+		} catch (edu.ucdavis.jr.QuiescenceRegistrationException e) {
+			//TODO: handle exception
+		}
+    }
+    private static op void done(){
+        System.out.println("Resultado: "+ ((x+y)/r));
+    }
+}
