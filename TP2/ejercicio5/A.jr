@@ -1,0 +1,45 @@
+import edu.ucdavis.jr.JR;
+import java.lang.Math;
+
+public class A {
+
+  private static int buffer;
+  private static sem vacio = 1;
+  private static sem lleno = 0;
+  private static int repeticiones = 0; // Lo agrego para probarlo N veces
+
+  //Pausa
+  private static op void pausa(int tiempo){
+        try{
+                Thread.sleep(tiempo);
+        }catch(java.lang.Exception e){}
+
+    }
+
+  private static process productor {
+    while (repeticiones < 10) {
+      P(vacio);//Productor comienza esperando al semaforo VACIO, si es 1 continua
+      int numero = (int) (Math.random() * 100);
+      buffer = numero;
+      repeticiones += 1;
+      System.out.println("Productor ingresa " + buffer);
+      call pausa(1000);
+      V(lleno);//Termina y pone a LLENO en 1, indicando que está listo para ser consumido
+    }
+  }
+
+  private static process consumidor {
+    while (repeticiones < 10) {
+      P(lleno);//Consumidor comienza esperando al semaforo LLENO, si es 0 se bloqueará, caso contrario continua
+      System.out.println("Consumidor retira " + buffer);
+      buffer = 0;
+      call pausa(1000);
+      V(vacio);//Indica que se vacio el buffer, vacio = 1
+    }
+  }
+
+  public static void main(String [] args) {
+    System.out.println("\n"+"-----Productor-Consumidor Buffer Simple 1P 1C-----");
+  }
+
+}

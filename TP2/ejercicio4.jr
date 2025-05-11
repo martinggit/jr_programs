@@ -1,0 +1,67 @@
+/*   definición de Stallings:
+function testset (var i: integer): boolean;
+begin
+  if i = 0 then
+    begin
+        i := 1;
+        testset := true
+    end
+  else testset := false
+end.
+*/
+
+import edu.ucdavis.jr.JR;
+import java.util.ArrayList;
+
+public class ejercicio4 {
+
+  private static sem mutex = 1; // El semáforo se inicializa en 1 para especificar que hay 1 solo recurso
+  private static int variableCompartida = 0;
+  private static int contador = 0;
+  
+  public static boolean testSet(int variableCompartida) {
+    boolean retorno;
+    P(mutex); // La primera vez que entra setea el semáforo en cero y sigue.
+    if (variableCompartida == 0) {
+      variableCompartida = 1;
+      contador +=1;
+      retorno = true;
+    }
+    else {
+      retorno = false;
+    }
+    V(mutex);
+    return retorno;
+  }
+
+  private static process p1 {
+    while (true) {
+      while (!testSet(variableCompartida));
+      System.out.println("Proceso 1: " + contador);
+      variableCompartida = 0;
+      call pausa (1000);
+    }
+  }
+
+  private static process p2 {
+    while (true) {
+      while (!testSet(variableCompartida));
+      System.out.println("Proceso 2: " + contador);
+      variableCompartida = 0;
+      call pausa(1000);
+    }
+  }
+
+   //Pausa
+  private static op void pausa(int tiempo){
+        try{
+                Thread.sleep(tiempo);
+        }catch(java.lang.Exception e){}
+
+    }
+
+  public static void main(String [] args) { 
+    System.out.println("\n"+"-----Ejercicio 4 Test and Set con semaforos-----");
+}
+
+}

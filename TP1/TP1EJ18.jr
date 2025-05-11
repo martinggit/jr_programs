@@ -15,7 +15,6 @@ public class TP1EJ18{
 
   //Pausa
   private static op void pausa(int tiempo){
-        
         try{
                 Thread.sleep(tiempo);
         }catch(java.lang.Exception e){}
