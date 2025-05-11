@@ -1,0 +1,60 @@
+import edu.ucdavis.jr.JR;
+import java.util.ArrayList;
+import java.util.Random; 
+
+public class TP1EJ18{
+
+  //Buffer
+  private static ArrayList<Integer> buffer = new ArrayList<Integer>(20); 
+  private static int capacidadBuffer;
+
+  private static sem depositado = 0;
+  private static sem recuperado = 1;
+
+  private static Random random = new Random();
+
+  //Pausa
+  private static op void pausa(int tiempo){
+        
+        try{
+                Thread.sleep(tiempo);
+        }catch(java.lang.Exception e){}
+
+    }
+ 
+
+  private static process productor {
+    while (true) { 
+      P(recuperado);
+      // Sección crítica
+      if (buffer.size() != capacidadBuffer) { // Si el buffer no supera su capacidad
+        int elemento = random.nextInt(200); // Generamos un entero entre 0 y 200
+        buffer.add(elemento); // Agregamos un entero al último indice del buffer
+        System.out.println("Producido elemento: " + elemento 
+        + " - Buffer: " + buffer.get(buffer.size()-1)); // Corroboramos si coinciden los elementos
+        call pausa(800);
+      }
+      V(depositado);
+    }
+  }
+
+ 
+  private static process consumidor {
+      while (true) {
+      P(depositado);
+      // Sección crítica
+      if (!buffer.isEmpty()) { // Si el buffer no esté vacío
+        System.out.println("Consumiendo elemento: " + buffer.get(0) + " en indice: 0"); // Mostrar el primer elemento del buffer 
+        buffer.remove(0); // Remover el primer elemento del buffer
+        call pausa(800);
+      }
+      V(recuperado);
+    }
+  }
+  
+  public static void main(String[] args ) {
+        capacidadBuffer = 20;
+        System.out.println("\n");
+        System.out.println("-----Productor-Consumidor-----");
+    }
+}
