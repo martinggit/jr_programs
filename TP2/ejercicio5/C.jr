@@ -1,0 +1,50 @@
+import edu.ucdavis.jr.JR;
+import java.lang.Math;
+
+public class C {
+
+  private static int productores = 2;
+  private static int consumidores = 3;
+
+  private static int n = 3; 
+  private static int [] buffer = new int [n]; //Implemento buffer "infinito"
+
+  private static sem vacio = 1; //inicializado en 1 porqe está vacio
+  private static sem lleno = 0; //inicializado en 0 porque no está lleno 
+
+  private static sem mutexPro = 1; 
+  private static sem mutexCon = 1;
+
+  private static int inicio = 0; // Variable que lleva la cuenta de donde ingresar el elemento.
+  private static int fin = 0; // Variable que lleva la cuenta de donde sacar el elemento.
+  
+  private static process productor((int i = 0; i < productores; i++)) {
+    while (true) {
+      P(vacio);
+      int numero = (int) (Math.random() * 100);
+      P(mutexPro); // Esperar a que otro productor no quiera acceder al buffer
+      buffer[inicio] = numero;
+      System.out.println("Productor " + i + " en indice " + inicio + " = " + numero);
+      inicio = (inicio + 1) % n; // Se implementa una cola circular en lugar de buffer ilimitado.
+      V(mutexPro); // Mando señal al semáforo de otro productor que puede usar el recurso 
+      V(lleno); // Mando señal a los consumidores avisando que ya hay elementos ingresados
+    }
+  }
+
+  private static process consumidor ((int i = 0; i < consumidores; i++)){
+    while (true) {
+      P(lleno);
+      P(mutexCon);//Exclusion mutua INICIO
+      int numero = buffer[fin];
+      System.out.println("Consumidor " + i + " en indice " + fin + " = " + numero);
+      fin = (fin + 1) % n; // Se implementa una cola circular en lugar de buffer ilimitado.
+      V(mutexCon);//Exclusion mutua FIN
+      V(vacio);
+    }
+  }
+
+  public static void main(String [] args) {
+    System.out.println("\n"+"-----Productor Consumidor con buffer infinito, NP MC-----");
+  }
+
+}

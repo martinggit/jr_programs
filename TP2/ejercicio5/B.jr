@@ -1,0 +1,48 @@
+import edu.ucdavis.jr.JR;
+import java.lang.Math;
+
+public class B {
+
+  private static int n = 3; 
+  private static int [] buffer = new int [n]; //implemento un buffer "infinito"
+
+  private static sem lleno = 0;// semaforo inicializado en 0 porque no hay elementos 
+  private static sem vacio = 1;
+ //Pausa
+  private static op void pausa(int tiempo){
+        try{
+                Thread.sleep(tiempo);
+        }catch(java.lang.Exception e){}
+
+    }
+    
+  private static process productor {
+    int inicio = 0; // variable que lleva la cuenta de donde ingresar el elemento.
+    while (true) {
+      P(vacio);
+      //call pausa(1000);
+      int numero = (int) (Math.random() * 100);//genero numero random
+      buffer[inicio] = numero; //inserto
+      System.out.println("Numero anadido en posicion (" +inicio+ ") = " + numero);
+      inicio = (inicio + 1) % n; // Se implementa una cola circular en lugar de buffer ilimitado.
+      V(lleno);//pongo a lleno en 1, elemento listo para consumir. 
+    }
+  }
+
+  private static process consumidor {
+    int fin = 0; // variable que lleva la cuenta de donde sacar el elemento.
+    while (true) {
+      //call pausa(1000);
+      P(lleno);//espero que lleno = 1, y lo seteo en 0 de vuelta, indicando que se consumio
+      int numero = buffer[fin];
+      System.out.println("Numero removido en posicion (" +fin+ ") = "+numero);
+      fin = (fin + 1) % n; // Se implementa una cola circular en lugar de buffer ilimitado.
+      V(vacio);
+    }
+  }
+
+  public static void main(String [] args) {
+    System.out.println("\n"+"-----Productor Consumidor Buffer ilimitado, 1P 1C-----");
+  }
+
+}
