@@ -1,0 +1,53 @@
+import edu.ucdavis.jr.JR;
+
+public class ejercicio6 {
+
+  private static int hayLugar = 1;    // Contador del semáforo: 0 o 1
+  private static int lista = 0;       // Cuento los procesos bloqueados
+  
+  private static sem semaforo = 0;    // Inicializamos en 0 para que el primer wait ya bloquee
+  private static sem mutex = 1;       // Semáforo para exclusión mutua
+
+  private static void espera() {
+    P(mutex);            
+    if (hayLugar == 1) { // Si no hay anuncios de procesos bloqueados
+      hayLugar = 0;      // Anunciamos que ya no hay lugar ahora
+      System.out.println("Habia lugar y ahora no");
+      V(mutex);          
+    } 
+    else {             // Si hay anuncios de procesos bloqueados
+      lista += 1;      // Sumamos 1 a la lista de procesos bloqueados 
+      System.out.println("No habia lugar, proceso bloqueado");
+      V(mutex);        
+      P(semaforo);     // Bloqueamos el proceso actual
+    }
+  }
+
+  private static void avisa() {
+    P(mutex);
+    if (lista == 0) { // Si no hay procesos en la lista de bloqueados
+      hayLugar = 1;   // Se anuncia que hay lugar
+      System.out.println("Lista vacia");
+      V(mutex);        
+    }
+    else {            // Si hay procesos en la lista de bloqueados
+      lista -= 1;     // Restamos uno a la lista de procesos bloqueados
+      System.out.println("Lista no vacia, desbloqueamos un elemento");
+      V(mutex);        
+      V(semaforo);    // Desbloqueamos un proceso y lo dejamos con estado LISTO.
+    }
+  }
+
+  private static process procesos((int i = 0; i < 3; i++)){
+    while (true) {
+      System.out.println("Proceso " + i);
+      espera();
+      avisa();
+    }
+  }
+
+  public static void main(String [] args) {
+    System.out.println("\n"+"-----Semaforos Binarios-----");
+  }
+
+}

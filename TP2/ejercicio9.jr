@@ -1,0 +1,143 @@
+import edu.ucdavis.jr.JR;
+
+public class ejercicio9 {
+
+  private static final int N = 5; // CANTIDAD DE SEMÁFOROS
+  // INICIALIZAMOS SEMÁFOROS
+  private static cap void () tenedor[] = new cap void()[N];
+  static {
+    for (int i = 0; i < N; i++) {
+      tenedor[i] = new sem(1);
+    }
+  }
+  /*
+  private static sem tenedor0 = 1;
+  private static sem tenedor1 = 1;
+  private static sem tenedor2 = 1;
+  private static sem tenedor3 = 1;
+  private static sem tenedor4 = 1;
+
+  private static process filosofo0{
+    while (true) {
+      // ESPERAR CUBIERTOS
+      P(tenedor0); // Esperar tenedor izquierdo
+      System.out.println("Filósofo 0 toma tenedor izquierdo.");
+      P(tenedor1); // Esperar tenedor derecho\
+      System.out.print("Filósofo 0 toma tenedor derecho.");
+      // COMER
+      System.out.println(" ---------> Filósofo 0 comiendo.");
+      // DEVOLVER CUBIERTOS
+      V(tenedor0); // Devuelve tenedor izquierdo
+      System.out.println("Filósofo 0 devuelve tenedor izquierdo.");
+      V(tenedor1); // Devuelve tenedor izquierdo
+      System.out.print("Filósofo 0 devuelve tenedor izquierdo.");
+      System.out.println(" ---------> Filósofo 0 pensando.");
+    }
+  }
+
+  private static process filosofo1{
+    while (true) {
+      // ESPERAR CUBIERTOS
+      P(tenedor1); // Esperar tenedor izquierdo
+      System.out.println("Filósofo 1 toma tenedor izquierdo.");
+      P(tenedor2); // Esperar tenedor derecho
+      System.out.print("Filósofo 1 toma tenedor derecho.");
+      // COMER
+      System.out.println(" ---------> Filósofo 1 comiendo.");
+      // DEVOLVER CUBIERTOS
+      V(tenedor1); // Devuelve tenedor izquierdo
+      System.out.println("Filósofo 1 devuelve tenedor izquierdo.");
+      V(tenedor2); // Devuelve tenedor izquierdo
+      System.out.print("Filósofo 1 devuelve tenedor derecho.");
+      System.out.println(" ---------> Filósofo 1 pensando.");
+    }
+  }
+
+  private static process filosofo2{
+    while (true) {
+      // ESPERAR CUBIERTOS
+      P(tenedor2); // Esperar tenedor izquierdo
+      System.out.println("Filósofo 2 toma tenedor izquierdo.");
+      P(tenedor3); // Esperar tenedor derecho
+      System.out.print("Filósofo 2 toma tenedor derecho.");
+      // COMER
+      System.out.println(" ---------> Filósofo 2 comiendo.");
+      // DEVOLVER CUBIERTOS
+      V(tenedor2); // Devuelve tenedor izquierdo
+      System.out.println("Filósofo 2 devuelve tenedor izquierdo.");
+      V(tenedor3); // Devuelve tenedor izquierdo
+      System.out.print("Filósofo 2 devuelve tenedor derecho.");
+      System.out.println(" ---------> Filósofo 2 pensando.");
+    }
+  }
+
+  private static process filosofo3{
+    while (true) {
+      // ESPERAR CUBIERTOS
+      P(tenedor3); // Esperar tenedor izquierdo
+      System.out.println("Filósofo 3 toma tenedor izquierdo.");
+      P(tenedor4); // Esperar tenedor derecho
+      System.out.print("Filósofo 3 toma tenedor derecho.");
+      // COMER
+      System.out.println(" ---------> Filósofo 3 comiendo.");
+      // DEVOLVER CUBIERTOS
+      V(tenedor3); // Devuelve tenedor izquierdo
+      System.out.println("Filósofo 3 devuelve tenedor izquierdo.");
+      V(tenedor4); // Devuelve tenedor izquierdo
+      System.out.print("Filósofo 3 devuelve tenedor derecho.");
+      System.out.println(" ---------> Filósofo 3 pensando.");
+    }
+  }
+
+  private static process filosofo4 {
+    while (true) {
+      // ESPERAR CUBIERTOS
+      P(tenedor0); // Esperar tenedor 0 (compartido con procesos 0 y 4)
+      System.out.println("Filósofo SABIO toma tenedor izquierdo.");
+      P(tenedor4); // Esperar tenedor 4 (compartido con procesos 3 y 4)
+      System.out.print("Filósofo SABIO toma tenedor derecho.");
+      // COMER
+      System.out.println(" ---------> Filósofo SABIO comiendo.");
+      // DEVOLVER CUBIERTOS
+      V(tenedor0); // Devuelve tenedor 0
+      System.out.println("Filósofo SABIO devuelve tenedor izquierdo.");
+      V(tenedor4); // Devuelve tenedor 4
+      System.out.print("Filósofo SABIO devuelve tenedor derecho.");
+      System.out.println(" ---------> Filósofo SABIO pensando.");
+    }
+  }
+  */
+
+  
+  private static process filosofos((int i = 0; i < N; i++)) {
+    while (true) {
+      // DETERMINAR CUBIERTO DEL FILOSOFO
+      int derecho = i; // Tenedor derecho es igual a número de filósofo
+      int izquierdo = (i+1 > N-1 ? 0 : i + 1); // Tenedor izquierdo es 0 si filosofo es el último
+      // CASO PRIMER FILÓSOFO
+      if (i == 0) { // Si es el primer filósofo, cambiamos de orden su tenedor derecho e izquierdo
+        int auxiliar = izquierdo;
+        izquierdo = derecho;
+        derecho = auxiliar;
+      }
+      // ESPERAR CUBIERTOS
+      P(tenedor[izquierdo]); // Esperar tenedor izquierdo
+      System.out.print("Filosofo " + i +" toma tenedor " + izquierdo + " - ");
+      P(tenedor[derecho]); // Esperar tenedor derecho
+      System.out.print("Filosofo " + i +" toma tenedor " + derecho + " - ");
+      // COMER
+      System.out.println("Filosofo " + i + " ----------> comiendo.");
+      // DEVOLVER CUBIERTOS
+      V(tenedor[izquierdo]); // Devuelve tenedor izquierdo
+      System.out.print("Filosofo " + i +" devuelve tenedor " + izquierdo + " - ");
+      V(tenedor[derecho]); // Devuelve tenedor izquierdo
+      System.out.print("Filosofo " + i +" devuelve tenedor " + derecho);
+      System.out.println("Filosofo " + i + " ---------->  pensando.");
+    }
+  }
+
+  public static void main(String [] args) {
+    System.out.println("\n"+"-----Problema de los filosofos-----");
+  }
+
+}

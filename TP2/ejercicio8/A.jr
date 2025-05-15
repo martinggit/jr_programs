@@ -1,0 +1,66 @@
+//Los lectores tienen prioridad
+
+import edu.ucdavis.jr.JR;
+import java.lang.Math;
+
+public class A {
+
+  private static int [] arreglo = {1, 2, 3, 4, 5, 6}; // Arreglo de 6 elementos ya inicializado
+  private static int lectores = 0; // Cantidad de lectores en un momento dado
+  private static sem mutexLector = 1; // Semáforo de exclusión mutua para los lectores que modifican la cantidad de lectores
+  private static sem sinEscritores = 1; // Semáforo común entre lectores y escritores. Además de exclusión mutua entre 
+                                        // escritores, sirve para que el primer lector espere que no haya escritores y que el 
+                                        // último lector avise a los escritores que ya pueden escribir. 
+
+  private static process lector((int i = 0; i < 3; i++)) {
+    while (true) {
+      P(mutexLector); // Entramos en la exclusión mutua entre lectores que modifican la variable de cantidad
+      lectores += 1; // Aumentamos la cantidad de lectores
+      if (lectores == 1) { // Si es el primer lector
+        P(sinEscritores);  // Esperamos que no haya escritores 
+      }
+      V(mutexLector); // Salimos de la exclusión mutua entre lectores que modifican la variable de cantidad
+      
+      //LEER DATO
+      int indice = (int) ((Math.random() * 100) % 6); // Generamos un número random entre 0 y 5 para el índice a leer
+      System.out.print("Leyendo desde Proceso " + i + " indice " + indice + " numero = " + arreglo[indice] + " --> "); // Leemos
+      mostrarArreglo(arreglo);
+      
+
+      P(mutexLector); // Entramos en la exclusión mutua entre lectores que modifican la variable de cantidad
+      lectores -= 1; // Decrementamos la cantidad de lectores
+      if (lectores == 0) { // Si es el último lector
+        V(sinEscritores); // Avisamos a los lectores que ahora puden entrar
+      }
+      V(mutexLector); // Salimos de la exclusión mutua entre lectores que modifican la variable de cantidad
+    }
+  }
+  
+  private static process escritor((int i = 0; i < 3; i++)) {
+    while (true) {
+      P(sinEscritores); // Exclusión mutua entre escritores
+      
+      //Escribir dato
+      int indice = (int) ((Math.random() * 100) % 6); // Generamos un número random entre 0 y 5 para el índice a escribir
+      int numero = (int) (Math.random() * 100); // Generamos un número random para escribirlo
+      arreglo[indice] = numero; // Escribimos el número
+      System.out.print("Escribiendo desde Proceso " + i + " indice " + indice + " numero = " + arreglo[indice] + " --> ");
+      mostrarArreglo(arreglo);
+      
+      V(sinEscritores); // Avisamos que ya no hay escritores
+    }
+  }
+
+  private static void mostrarArreglo(int [] arrayanes) {
+    for (int i : arrayanes) {
+      System.out.print(i + " ");
+    }
+    System.out.println();
+  }  
+
+  public static void main(String [] args) {
+    System.out.println("\n"+"-----Lectores y Escritores, lectores con prioridad-----");
+  }
+    
+}
+

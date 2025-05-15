@@ -1,0 +1,68 @@
+/* Las tareas son procesos con el siguiente código:
+  Process T[i]
+    while true 
+      begin
+        wait for predecesores, si los hay; 
+        cuerpo de la tarea;
+        signal a los sucesores, si los hay;
+      end;
+*/
+import edu.ucdavis.jr.JR;
+
+public class ejercicio7 {
+
+  private static sem sem1 = 1; //semaforo para el proceso 1, inicializado en 1 porque no espera a ninguno
+  private static sem sem2 = 0;//semaforo del proceso 2
+  private static sem sem3 = 0;//semaforo del proceso 3
+  private static sem sem4 = 0;//semaforo del proceso 4
+  private static sem sem53 = 0;//semaforo del proceso 5 que avisa cuando termina proceso 3
+  private static sem sem54 = 0;//semaforo del proceso 5 que avisa cuando termina el proceso 4
+
+
+  private static process p1 {
+    while (true) {
+      P(sem1); // Pasa la primera vez pues sem1 = 1
+      System.out.println("Ejecutando Proceso 1");
+      V(sem2); // Avisa al proceso 2
+      V(sem3); // Avisa al proceso 3
+    }
+  }  
+
+  private static process p2 {
+    while (true) {
+      P(sem2); // Espera la señal del primer proceso
+      System.out.println("Ejecutando Proceso 2");
+      V(sem4); // Avisa al proceso 4
+    }
+  }
+
+  private static process p3 {
+    while (true) {
+      P(sem3); // Espera la señal del primer proceso
+      System.out.println("Ejecutando Proceso 3");
+      V(sem53); // Avisa al proceso 5 identificandose
+    }
+  }
+
+  private static process p4 {
+    while (true) {
+      P(sem4); // Espera la señal del segundo proceso
+      System.out.println("Ejecutando Proceso 4");
+      V(sem54); // Avisa al proceso 5 identificandose
+    }
+  }
+
+  private static process p5 {
+    while (true) {
+      P(sem53); // Espera la señal del proceso 3
+      P(sem54); // Espera la señal del proceso 4
+      System.out.println("Ejecutando Proceso 5");
+      V(sem1); // Avisa al proceso 1
+    }
+  }
+
+  public static void main(String [] args) {
+    System.out.println("\n"+"----- Ejercicio grafo de precedencia con semaforos-----");
+  }
+
+}
