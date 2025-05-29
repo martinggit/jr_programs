@@ -1,0 +1,59 @@
+
+import edu.ucdavis.jr.JR;
+import java.lang.Math;
+
+public class ejercicio11 {
+
+  private static int pizzasEmpezadas = 0;
+  private static sem agregarQueso, agregarSalsa, agregarMorrones, pizzaLista = 0;
+  private static sem ayudanteLibre = 1;
+
+  private static process chef {
+    while (true) {
+      pizzasEmpezadas += 1;
+      System.out.println("Chef Comienza a amasar pizza nueva numero " + pizzasEmpezadas);
+      // Agrega dos ingredientes al azar
+      int ingredienteFaltante = (int) ((Math.random() * 100) % 3); // Rango 0..2 (tres elementos)
+      P(ayudanteLibre);
+      if (ingredienteFaltante == 0) { // Falta queso
+        System.out.println("Chef solicita queso para pizza " + pizzasEmpezadas);
+        V(agregarQueso);
+      } else if (ingredienteFaltante == 1) { // Falta salsa
+        System.out.println("Chef solicita salsa para pizza " + pizzasEmpezadas);
+        V(agregarSalsa);
+      } else if (ingredienteFaltante == 2) { // Faltan morrones 
+          System.out.println("Chef solicita morrones para pizza " + pizzasEmpezadas);
+        V(agregarMorrones);
+      }
+    }
+  }
+  
+  private static process ayudanteQueso {
+    while (true) {
+      P(agregarQueso);
+      System.out.println("Ayudante agrega queso.");
+      V(ayudanteLibre);
+    }
+  }
+
+  private static process ayudanteSalsa {
+    while (true) {
+      P(agregarSalsa);
+      System.out.println("Ayudante agrega salsa.");
+      V(ayudanteLibre);
+    }
+  }
+
+  private static process ayudanteMorrones {
+    while (true) {
+      P(agregarMorrones);
+      System.out.println("Ayudante agrega morrones.");
+      V(ayudanteLibre);
+    }
+  }
+
+  public static void main(String [] args) {
+    System.out.println("\n"+"-----Ejercicio de la pizerria-----");
+  }
+
+}

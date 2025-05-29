@@ -35,7 +35,9 @@ public class ejercicio10 {
         V(clientesEsperando);
         System.out.println("Sillas libres = " + sillasLibres + " porque el Cliente " + i + " espera");
         V(mutex);
+        
         P(barberoListo);
+
         P(mutex);
         sillasLibres += 1;
         System.out.println("Cliente " + i + " deja silla pues el barbero anuncia su turno. Ahora hay " + sillasLibres + " sillas libres");

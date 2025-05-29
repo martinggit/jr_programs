@@ -1,0 +1,43 @@
+
+
+BARCO (1..3)
+int vehiculoscargados = 0
+while (true){
+    wait(mutexRampa)
+    wait (autosListos)
+    while (vehiculoscargados < n){
+        signal(puedoSubir)
+        wait (autoSubido)
+        vehiculoscargados++;
+    }
+    signal(mutexRampa)
+    CRUZA
+    while (vehiculoscargados > 0){
+        signal(puedoBajar)
+        vehiculoscargados--;
+        }
+}
+
+AUTO(1..M)
+autosEsperando++;
+if (autosEsperando >= n)
+    signal(autosListos)
+    autosEsperando -=n
+wait(puedoSubir)
+autosEsperando--;
+signal(autoSubido)
+wait(puedoBajar)
+
+n=20
+sem mutexRampa = 1
+sem autosListos = 0
+sem puedoSubir = 0
+sem autoSubido = 0
+sem puedoBajar = 0
+
+int autosEsperando = 0
+sem mutexAutos = 1
+sem mutexn = 1
+
+
+
