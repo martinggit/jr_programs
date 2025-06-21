@@ -1,0 +1,49 @@
+class monitor {
+  int sumaTotal = 0;
+  int contador = 0;
+  // Variables de condición
+  sem mutex = 1;
+  sem esperar = 0;
+
+  public int sumar(int numero) {
+    P(mutex);
+    System.out.println(Thread.currentThread().getName() + " entro con valor: " + numero);
+    sumaTotal += numero;
+    contador++;
+    
+    if (contador < 3) {
+      V(mutex);        // liberar para que otro sume
+      P(esperar);      // esperar hasta que se complete el grupo de 3
+    } else {
+      contador = 0;    // reiniciar el contador
+      V(esperar);      // despertar a los otros dos
+      V(esperar);
+      V(mutex);
+    }
+
+    return sumaTotal;
+  }
+  }
+
+public class PruebaMonitor {
+  public static void main(String[] args) {
+    final monitor m = new monitor();
+
+    class Tarea extends Thread {
+      int valor;
+
+      Tarea(int valor) {
+        this.valor = valor;
+      }
+
+      public void run() {
+        int resultado = m.sumar(valor);
+        System.out.println(getName() + " sumo " + valor + ", total acumulado: " + resultado);
+      }
+    }
+
+    for (int i = 1; i <= 6; i++) {
+      new Tarea(i * 10).start(); // crea hilos que suman 10, 20, ..., 60
+    }
+  }
+}

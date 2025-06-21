@@ -1,0 +1,28 @@
+// 18 personas sedientas quieren beber de un
+// solo dispenser de agua, algunas con vaso y 
+// otras con botella
+
+public class Semaforo{
+  // Inicializar nro de procesos de cada recipiente
+  private static final int N = 9;
+  // Inicializar un monitor Semaforo
+  private static MonitorSemaforo semaforo = new MonitorSemaforo("Monitor simulando Semáforo");
+  
+  // Definimos los procesos 
+  private static process SedientoVaso((int i = 0; i <= N; i++)) {
+    semaforo.semWait();
+    // PERFORMAR ALGO
+    System.out.println("Bebiendo del dispenser con vaso la persona " + i);
+    semaforo.semSignal();
+  }
+
+  private static process SedientoBotella((int i = 0; i <= N; i++)) {
+    semaforo.semWait();
+    // PERFORMAR ALGO
+    System.out.println("Bebiendo del dispenser con botella la persona " + i);
+    semaforo.semSignal();
+  }
+
+  public static void main (String [] args) {}
+  
+}

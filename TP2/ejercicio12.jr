@@ -1,0 +1,64 @@
+import edu.ucdavis.jr.JR;
+
+public class ejercicio12 {
+  private static sem vulnerable= 0;
+  private static sem bacteriaBlancaAtaca= 0;
+  private static sem bacteriaRojaAtaca= 0;
+  private static sem ataqueExitosoBlanco= 0;
+  private static sem ataqueExitosoRojo= 0;
+  private static sem morir= 0;
+  private static boolean suceptible =false;
+  private static boolean muerto= false;
+
+    private static process ataque{
+        while (true){
+        P(vulnerable);
+        P(bacteriaBlancaAtaca);
+        P(bacteriaBlancaAtaca);
+        P(bacteriaRojaAtaca);
+        P(bacteriaBlancaAtaca);
+        P(bacteriaBlancaAtaca);
+        P(bacteriaRojaAtaca);
+        V(ataqueExitosoBlanco);
+        V(ataqueExitosoBlanco);
+        V(ataqueExitosoBlanco);
+        V(ataqueExitosoBlanco);
+        V(ataqueExitosoRojo);
+        V(ataqueExitosoRojo);
+        V(morir);
+        }
+    }
+
+    private static process bacteriaRoja((int i = 0; i <= 5; i++)) {
+        while (true) {
+        V(bacteriaRojaAtaca);
+        System.out.println("Bacteria Roja ataca");
+        P(ataqueExitosoRojo);
+        }
+    }
+
+    private static process bacteriaBlanca((int i = 0; i <= 5; i++)) {
+        while (true) {
+        V(bacteriaBlancaAtaca);
+        System.out.println("Bacteria Blanca ataca");
+        P(ataqueExitosoBlanco);
+        }
+    }
+
+    private static process organismo ((int i = 0; i<=2; i++)){
+        while (muerto == false ){
+            System.out.println("Organismo"+i+"vive");
+            suceptible = true;
+            if (suceptible = true){
+                V(vulnerable);
+                P(morir);
+                System.out.println("Organismo"+i+"murio");
+                muerto=true;
+            }
+        }
+    }
+  public static void main(String [] args) {
+    System.out.println("\n"+"-----Ejercicio organismos y bacterias-----");
+  }
+
+}

@@ -1,0 +1,26 @@
+public class LectoresEscritores {
+
+  private static MonitorLibro libro = new MonitorLibro("Monitor Libro"); 
+
+  private static process lector((int i = 0; i < 25; i++)) {
+    while (true){
+      String texto = libro.solicitarLectura();
+      // Leyendo
+      System.out.println("Lector " + i + " leyendo " + texto);
+      libro.liberarLectura();
+    }
+  }
+
+  private static process escritor((int i = 0; i < 4; i++)) {
+    while (true){
+      libro.solicitarEscritura(i);
+      // Escibiendo
+      libro.liberarEscritura();
+    }
+  }
+
+  public static void main(String [] args) {
+    System.out.println("-----Lectores Escritores con Hoare-----");
+  }
+
+}
