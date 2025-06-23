@@ -1,0 +1,75 @@
+/*Múltiples lectores puedan leer simultáneamente.
+
+Un escritor debe acceder en exclusión mutua total.
+
+Si hay lectores esperando, ellos deben entrar antes que un escritor. 
+*/
+
+//PSEUDOCODIGO
+
+/*
+NO DEBEN INGRESAR MAS VEHICULOS QUE 2xN
+NO DEBE HABER MAS DE N VEHICULOS POR PISO (PB,1P)
+PRIMERO SE LLENA PB Y LUEGO 1P
+SOLO PASA UN VEHICULO POR LA ENTRADA/SALIDA A LA VEZ
+
+
+*/
+public class LectoresPrioridad {
+    int lectores=0;
+    // CREO LOS CANALES
+    private static op void mutexLectores() // Protege el contador de lectores
+    private static op void escribir() // Solo un escritor escribe a la vez
+    private static op void turnoEscritor() // Para coordinar entrada de escritores cuando no hay lectores
+  
+
+    public static void main(String... args){
+        // Antes de iniciar tengo que llenar de msg en el canal
+       send(null,mutexLectores);
+       send(null,escribir);
+       send(null,turnoEscritor);
+        
+    }
+
+    private  process lector[1..M]{
+        message msg;
+      
+        //inicio lectura
+        receive(mutexLectores,msg);
+        lectores++;
+        if(lectores == 1){
+            //primer lector bloquea a los escritores
+            receive(turnoEscritor,msg);
+        }
+        send(mutexLectores,null);
+        
+        //Leer
+        leo();
+
+        //fin de lectura
+        receive(mutexLectores,msg);
+        lectores--;
+        if (lectores==0){
+            //ultimo lector libera el turno para escritores
+            send(turnoEscritor,msg);
+        }
+        send(mutexLectores,null);
+    }
+
+    private process escritor[1..N]{
+        message msg;
+
+        //Espera su turno
+        receive(turnoEscritor,msg);
+
+        //excluyo a otros escritores
+        receive(escribir,msg);
+
+        //escribo
+        escribir();
+
+        //Libero acceso a otros escritores y el turno general
+        send(escribir,null);
+        send(turnoEscritor,null);
+    }
+}

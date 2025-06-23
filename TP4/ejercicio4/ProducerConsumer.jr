@@ -1,0 +1,34 @@
+public class ProducerConsumer {
+    int BUFFER_SIZE = 10;
+    int N = 4;//Cant productores
+    int M = 3;//Cant consumidores
+
+    // CREO LOS CANALES
+    private static op void puedeProducir(String)
+    private static op void puedeConsumir(String)
+ 
+    public static void main(String... args){
+        // Antes de iniciar tengo que llenar de msg en el canal
+        for(int i = 0; i < BUFFER_SIZE; i++){
+            send (puedeProducir,null);
+        }    
+    }
+
+    private  process Producer [1..N]{
+    message pmsg;
+        while(true){
+         receive(puedeProducir,pmsg); //espero autorizacion, me bloqueo si buffer lleno
+         pmsg=producirMensaje(); //produzco mensaje
+         send(puedeConsumir, pmsg); //envio al canal puedeConsumir para que un consumidor lo tome
+        }
+
+    }
+    private  process Consumer [1..M]{
+    message cmsg;
+        while(true){
+            receive(puedeConsumir,cmsg); //espero un mensaje producido
+            consumir(cmsg); //consumo
+            send(puedeProducir,cmsg); //libero un lugar en el buffer
+        }
+    }
+}

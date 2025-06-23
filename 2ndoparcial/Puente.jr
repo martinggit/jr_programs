@@ -1,0 +1,31 @@
+public class Puente {
+    private static final int N = 3; // cantidad máxima de autos por turno
+    private static MonitorPuente puente = new MonitorPuente("Monitor Puente");
+
+    // Proceso de autos que cruzan desde el norte
+    private static process autoNorte((int i = 0; i < 10; i++)) {
+        while (true) {
+        puente.llegarNorte();
+        // Simulando el cruce
+        System.out.println("Auto del NORTE " + i + " cruzando el puente.");
+        // Tiempo simulado de cruce
+        puente.salirNorte();
+        }
+    }
+
+    // Proceso de autos que cruzan desde el sur
+    private static process autoSur((int i = 0; i < 10; i++)) {
+        while (true) {
+        puente.llegarSur();
+        // Simulando el cruce
+        System.out.println("Auto del SUR " + i + " cruzando el puente.");
+        // Tiempo simulado de cruce
+        puente.salirSur();
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("---- Simulacion de cruce de puente con monitores ----");
+    }
+
+}

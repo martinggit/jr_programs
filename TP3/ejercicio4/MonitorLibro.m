@@ -13,32 +13,32 @@ _monitor MonitorLibro {
 
   // Procedimientos
   _proc String solicitarLectura(){
-    while(escritores > 0) {
+    while(escritores > 0) { //si hay escritores espero que me den el ok para leer
       _wait(okParaLeer);
     }
-    lectores += 1;
+    lectores += 1; //1 lector mas leyendo
     _return texto;
   }
 
   _proc void liberarLectura(){
-    lectores -= 1;
-    if (lectores == 0){
+    lectores -= 1; //termino de leer y me voy
+    if (lectores == 0){ //si no hay lectores aviso que se puede escribir
       _signal(okParaEscribir);
     }
   }
 
   _proc void solicitarEscritura(int escritor){
     texto = textos[escritor];
-    while(escritores > 0 && lectores > 0){
-      _wait(okParaEscribir);
+    while(escritores > 0 && lectores > 0){//si no hay nadie escribiendo ni leyendo
+      _wait(okParaEscribir);//espero mientras me dan el ok para escribir
     }
-    escritores += 1;
+    escritores += 1;//aviso que estoy escribiendo
     System.out.println("El Escritor " + escritor + " escribe: '" + texto + "'.");
   }
 
   _proc void liberarEscritura(){
-    escritores -= 1;
-    _signal(okParaEscribir); _signal_all(okParaLeer);
+    escritores -= 1;//termino de escribir y me voy
+    _signal(okParaEscribir); _signal_all(okParaLeer);//aviso que pueden escribir y aviso que pueden leer
   }
 
 }

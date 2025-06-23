@@ -1,0 +1,151 @@
+//PSEUDOCODIGO
+/*
+NO DEBEN INGRESAR MAS VEHICULOS QUE 2xN
+NO DEBE HABER MAS DE N VEHICULOS POR PISO (PB,1P)
+PRIMERO SE LLENA PB Y LUEGO 1P
+SOLO PASA UN VEHICULO POR LA ENTRADA/SALIDA A LA VEZ
+*/
+
+public class Estacionamiento {
+    const N = 5;
+
+    // CREO LOS CANALES
+    private static op void puertaLibre() // Controlar acceso a la puerta
+    private static op void espacioPB() // Cocheras disponibles en planta baja
+    private static op void espacio1P() // Cocheras disponibles en primer piso
+    private static op void totalDisponible() // Lugares totales
+    //private static op void consultarConteo() // Para consulta externa
+
+    public static void main(String... args){
+        // Antes de iniciar tengo que llenar de msg en el canal
+       
+        //Hay una sola puerta
+        send(puertaLibre,null);
+
+        //Capacidad total
+        for(int i = 0; i < 2*N ; i++){ 
+            send (totalDisponible,null); 
+        }    
+
+        //Cocheras PB
+        for (int i = 0; i < N; i++){
+            send(espacioPB,null);
+        }
+        //Cocheras 1P
+         for (int i = 0; i < N; i++){
+            send(espacio1P,null);
+        }
+    }
+
+    private  process vechiculo[1..M]{
+        message msg;
+        
+        //Intento entrar si hay espacio
+        receive(totalDisponible,msg); // Me aseguro que hay espacio
+        receive(puertaLibre, msg); //Uso la puerta
+
+        //Intento estacionar en PB primero
+        if receive(espacioPB, msg){
+            //Estacione en PB
+            send(puertaLibre,null);
+            //Simulo tiempo estacionado
+            esperarTiempo();
+
+            //Espero que la puerta este libre para irme
+            receive(puertaLibre,msg);
+            salir();//salgo del estacionamiento
+            send(puertaLibre,msg);
+
+            send(espacioPB,null);//Libero cochera PB
+        } else{ //significa que no hay espacio en PB
+            //Intento en 1P
+            receive(espacio1P,msg);
+            send(puertaLibre, null);
+            //Simulo tiempo estacionado
+            esperarTiempo();
+
+            //Espero que la puerta este libre para irme
+            receive(puertaLibre,msg);
+            salir();//salgo del estacionamiento
+            send(puertaLibre,msg);
+            send(espacio1P,null);//libero cochera 1P
+
+        }
+
+    send(totalDisponible,null);//Libero lugar total
+    }
+}
+
+------------------------------------------------------------------------------------------------------
+
+public class Estacionamiento {
+    const N = 5;
+    int cant_PB = 0;
+    int cant_1P = 0;
+
+    // Semáforos tipo mensaje
+    private static op void puertaLibre()
+    private static op void totalDisponible()
+    private static op void mutexPB()
+    private static op void mutex1P()
+
+    public static void main(String... args){
+        send(puertaLibre);
+        send(mutexPB);
+        send(mutex1P);
+
+        for(int i = 0; i < 2*N ; i++) 
+            send(totalDisponible);
+    }
+
+    private process vehiculo[1..M] {
+        message msg;
+
+        receive(totalDisponible);  // hay espacio
+        receive(puertaLibre);      // uso la puerta
+
+        // Intento PB
+        receive(mutexPB);
+        if (cant_PB < N) {
+            cant_PB++;
+            send(mutexPB);
+
+            send(puertaLibre);  // libero la puerta
+
+            esperarTiempo();  // tiempo estacionado
+
+            receive(puertaLibre);  // para salir
+
+            salir();
+
+            receive(mutexPB);
+            cant_PB--;
+            send(mutexPB);
+
+            send(puertaLibre);      // libero puerta
+        } else {
+            send(mutexPB); // libero mutex PB
+            // Intento 1P
+            receive(mutex1P);
+            if (cant_1P < N) {
+                cant_1P++;
+                send(mutex1P);
+
+                send(puertaLibre);
+
+                esperarTiempo();
+
+                receive(puertaLibre);
+
+                salir();
+
+                receive(mutex1P);
+                cant_1P--;
+                send(mutex1P);
+
+                send(puertaLibre);
+            } 
+        }
+        send(totalDisponible); // liberar lugar total
+    }
+}

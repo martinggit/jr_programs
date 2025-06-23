@@ -1,0 +1,66 @@
+/*
+Pasaje de mensajes ASINCRONICOS.
+Este es un sencillo ejemplo de como se declara un canal de 
+mensajes, y como se utilizan las primititvas send y receive.
+La declracion de un canal es de esta manera:
+    private static op void canal(String);
+Se declara con la primitiva "op". JR lo trabaja como si fuera
+una cola.
+Luego por otra parte tenemos la primitiva send, que envia un contenido
+y receive para recuperar ese contenido.
+A continuacion tenemos un ejemplo de productor-consumidor buffer simple. 
+*/
+
+public class ProducerConsumer {
+    private static final int N = 12; //Numero de productores y consumidores
+
+    private static int cont = 0;
+
+    private static op void mayProduce(String); //El canal de tipo STRING
+
+    private static op void mayConsume(String); //El canal de tipo STRING
+
+
+
+    public static void main(String... args){
+
+        // Antes de iniciar tengo que llenar de msg en el canal
+        for(int i = 0; i < N; i++){
+            System.out.println("inicializando: " + i);
+            send mayProduce("msg:" + i);
+        }    
+
+
+        ProducerConsumer pc = new ProducerConsumer();
+
+
+    }
+
+    private  process Producer{
+        while(true){
+            cont++;
+            String data;
+
+            receive mayProduce(data);
+            data = "" + cont ;
+            System.out.println("Producer: " + data);
+            send mayConsume(data);
+
+        }
+
+    }
+
+    private  process Consumer{
+
+        while(true){
+            String data;
+            receive mayConsume(data);
+            System.out.println("Consumer: " + data);
+            send mayProduce("otro");
+        }
+    }
+}
+/*
+    Se compila y ejecuta como un programa cualquiera con extension .jr
+    # jr ProducerConsumer
+*/

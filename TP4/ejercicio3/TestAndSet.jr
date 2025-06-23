@@ -1,0 +1,33 @@
+public class TestAndSetMensajes {
+
+    // Canal para simular la variable booleana
+    private static op void lockMsg();
+
+    public static void main(String[] args) {
+        // Inicializamos el "lock" como libre (false)
+        // con 1 mensaje en el canal
+        send(lockMsg, null);
+    }
+
+    // Proceso que quiere hacer TestAndSet
+    private process Proceso[1..N] {
+        message msg;
+
+        // Simulamos la operación TestAndSet
+
+        if receive(lockMsg, msg) {
+            // Pudo recibir → el lock estaba libre (false)
+            // Lo pone ocupado (true) simplemente **no reenvía**
+            // hasta que su trabajo termine
+
+            // === Zona crítica ===
+            trabajar();
+            // ====================
+
+            // Libera el lock
+            send(lockMsg, null);
+        } else {
+            // No pudo recibir → el lock ya estaba ocupado
+        }
+    }
+}
