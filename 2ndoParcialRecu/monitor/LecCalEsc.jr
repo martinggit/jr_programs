@@ -1,0 +1,37 @@
+import edu.ucdavis.jr.JR;
+
+public class LecCalEsc {
+    private static LecCalEsc monitor = new LecCalEsc("Monitor");
+
+    private static process Lector1() {
+        int i = 0;
+        while (true) {
+            i++;
+            System.out.println("L1 leyó: " + i);
+            monitor.ponerDato1(i); //pongo el dato en memoria
+        }
+    }
+
+    private static process Lector2() {
+        int i = 100;
+        while (true) {
+            i++;
+            System.out.println("L2 leyó: " + i);
+            monitor.ponerDato2(i); //pongo el dato en memoria
+        }
+    }
+
+    private static process Calculo() {
+        while (true) {
+            monitor.calcular();
+            System.out.println("Cálculo hecho.");
+        }
+    }
+
+    private static process Escritor() {
+        while (true) {
+            int res = monitor.obtenerResultado();
+            System.out.println("Resultado mostrado: " + res);
+        }
+    }
+}
