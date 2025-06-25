@@ -1,0 +1,99 @@
+//PSEUDOCODIGO
+
+public class JuegoAviones {
+    const int N = 20;
+    const int max_cajas = 100;
+
+    int cajas_arrojadas = 0;
+    int derribados = 0;
+    boolean finJuego = false;
+
+    //CREO CANALES
+    private static void op mutexFin();
+    private static void op mutexCajas();
+    private static void op mutexDerribados();
+    private static void op avionesEnCampo();
+    private static void op permisoAvion();
+  
+    public static void main (String...args){
+    //inicializo los canales
+        send(mutexCajas,null);
+        send(mutexDerribados,null);
+        send(mutexFin,null);
+
+        for (int i = 0; i < 5; i++){ //inicializo el espacio para solo 5 aviones en campo
+            send(avionesEnCampo,null);
+        }
+
+        for (int i = 0; i < N; i++){ //le doy permiso para despegar a los 20 aviones
+            send(permisoAvion,null);
+        }
+    }
+
+    private process avion [1..N]{
+        message msg;
+        boolean meDan;
+
+        while (true){ 
+            //El juego termina cuando no hay mas aviones en el aire o cuando la ayuda se completó cajas_arrojadas=100
+            receive(mutexFin, msg);
+            if (finJuego){
+                send(mutexFin,null);
+                break;
+            }
+            send(mutexFin,null);
+
+            receive(permisoAvion, msg);//Espero permiso para intentar despegar;
+            receive(avionesEnCampo, msg);//haciendo un receive y un send al final me aseguro que solo entren 5 
+            
+            //despego desde base
+            despegar();
+
+            //paso por territorio hostil, (puedo sufrir un ataque, si me pega me derriba)
+            meDan = random(true,false);
+            if (meDan){
+                //fui derribado
+                receive(mutexDerribados,msg);
+                derribados++;
+                send(mutexDerribados,null);
+
+                send(avionesEnCampo,null);//libero lugar en campo
+                break;// NO VUELVO A VOLAR
+
+            } else {
+                //logré pasar, lanzo 2 cajas
+                receive(mutexCajas,msg);
+                if (cajas_arrojadas < max_cajas){
+                    cajas_arrojadas+=2;
+                }
+                send(mutexCajas,null);
+
+                send(avionesEnCampo,null);//vuelvo a la base
+                send(permisoAvion,null); //intento nuevo vuelo
+                }
+            }
+    }
+
+    private process controlador{
+        message msg;
+
+        while (true){
+            receive(mutexCajas,msg);
+            int cajas = cajas_arrojadas;
+            send(mutexCajas,null);
+
+            receive(mutexDerribados, msg);
+            int muertos = derribados;
+            send(mutexDerribados,null);
+
+            if (cajas >= max_cajas || muertos == N){
+                //FIN DEL JUEGO: AVISO A TODOS LOS AVIONES PARA TERMINAR
+                receive(mutexFin,msg);
+                finJuego = true;
+                send(mutexFin,null);
+                break;
+            }
+        }
+    }
+
+}

@@ -1,0 +1,21 @@
+import java.util.Random;
+
+public class Cuenta {
+    private static final int N = 12; //Numero de clientes
+    private static CuentaBancaria prueba = new CuentaBancaria("Monitor"); //The monitor
+    private static final Random rng = new Random();
+
+    public static void main(String... args){}
+
+    private static process Cliente((int i = 0; i <= N; i++)){
+        int accion= rng.nextInt(2);
+        int monto = rng.nextInt(500) + 1;
+        if (accion == 0){
+            prueba.deposit(monto);
+            System.out.println("Cliente "+ i +" deposito $ "+ monto);
+        }else{
+            prueba.extraction(monto);
+            System.out.println("Cliente "+ i +" retiro $ "+ monto);
+        }
+    }
+}
