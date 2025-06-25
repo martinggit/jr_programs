@@ -17,12 +17,12 @@ Acceso alternado: cuando terminan de cruzar los vehículos de un lado (o si no h
 Evitar inanición (opcional): si un lado siempre tiene autos, no debe bloquear indefinidamente al otro.
 */
 _monitor MonitorPuente {
-    int esperandoNorte = 0;
-    int esperandoSur = 0;
-    int cruzando = 0;
-    int cantidadEnTurno =0;
-    String direccionActual = "";
-    int N;
+    _var int esperandoNorte = 0;
+    _var int esperandoSur = 0;
+    _var int cruzando = 0;
+    _var int cantidadEnTurno =0;
+    _var String direccionActual = "";
+    _var int N;
 
     _condvar puedeCruzarNorte;
     _condvar puedeCruzarSur;

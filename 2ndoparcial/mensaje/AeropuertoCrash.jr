@@ -1,0 +1,72 @@
+//PSEUDOCODIGO
+
+public class Estacionamiento {
+    const N = 3; // 3 líneas de espera
+
+    int cant_aviones[]={0,0,0} //arreglo de 3 contadores, uno para cada pista
+
+    //CANAL PARA CONTROLAR LA PISTA
+    private static op void pistaLibre();
+    private static op void alarma();
+    private static op void mutexAviones();
+    
+    public static void main(String... args){
+        //Unica pista, 1 send
+        send(pistaLibre,null);
+        send(mutexAviones,null);
+        send(pistaLibre,null);
+    }
+
+    private process avion[1..M] {
+        message msg;
+        int miLinea = random(0,2); //Elijo una cola al azar
+
+        //Me sumo a la cola
+        receive(mutexAviones,msg);
+        cant_aviones[miLinea]++; //Incremento en mi linea
+        send(mutexAviones,msg);
+        
+        send(alarma,msg);//Aviso que hay un avion esperando
+
+        receive(permisoLinea[miLinea]); //Espero permiso del controlador
+
+        receive(pistaLibre, msg);//Espero que este libre la unica pista
+
+        //SIMULO DESPEGUE
+        despegar();
+
+        //Salgo y actualizo contador
+        receive(mutexAviones,msg);
+        cant_aviones[miLinea]--;
+        send(mutexAviones,null);
+
+        send(pistaLibre,null); //Libero la pista
+    }   
+
+    private process controlador{
+    message msg;
+    while (true){
+        //Espero que me avisen que hay un avión
+        receive(alarma,msg);
+
+        receive(mutexAviones, msg);
+        int maxCola = -1;
+        int maxCant = 0;
+        for(int i=0; i < N; i++){
+            if (cant_aviones[i] > maxCant){
+                maxCant = cant_aviones[i];
+                maxCola = i;
+            }
+        }
+        send(mutexAviones,null);
+
+        if (maxCant == 0)  break; //No hay más aviones -> duermo esperando
+
+        //Hay almenos un avion -> doy permiso al de la cola más larga
+        send(permisoLinea[maxCola]);
+
+        receive(pistaLibre,msg);//Espero que el avión despegue
+        send(pistaLibre,null);//Dejo disponible la pista para el siguiente avion
+    }
+    }
+}

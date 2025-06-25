@@ -1,0 +1,41 @@
+//PSEUDOCODIGO
+
+public class Token {
+    int N = 5; //Número de agentes
+    int entregaExitosa = 0; //Contador de la cantidad de entregas exitosas
+    
+    //CANAL PARA CONTROLAR 
+    private static op void mutexEntrega();
+    private static op void tokenUno[1..N]();// Token 1 entre el agente i -> i+1
+    private static op void tokenDos[1..N]();// Token 2 entre el agente i-> i+1
+    
+    public static void main(String... args){
+        //Inicializar los canales
+        send(mutexEntrega,null);
+        
+        //Inicializamos los tokens en el agente 1
+        send(tokenUno[1],null);
+        send(tokenDos[1],null);
+        
+    }
+
+    private process agente [1..N] {
+    message msg;
+    int sig = (i % N) +1; //agente siguiente (derecha)
+    int prev = (i -2 + N) % N +1; //agente anterior (izquierda)
+
+    while (true){
+        //TENGO QUE RECIBIR LOS TOKENS DEL AGENTE A MI IZQUIERDA
+        receive(tokenUno[prev],msg);
+        receive(tokenDos[prev],msg);
+
+        //UNA VEZ TENGO LOS TOKENS CUENTO LA ENTREGA
+        receive(mutexEntrega,msg);
+        entregaExitosa++;
+        send(mutexEntrega,null);
+
+        send(tokenUno[sig],null);
+        send(tokenDos[sig],null);
+    }
+    }   
+}

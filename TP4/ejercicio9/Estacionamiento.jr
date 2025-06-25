@@ -83,7 +83,7 @@ public class Estacionamiento {
     int cant_PB = 0;
     int cant_1P = 0;
 
-    // Semáforos tipo mensaje
+    //Creo los canales
     private static op void puertaLibre()
     private static op void totalDisponible()
     private static op void mutexPB()
