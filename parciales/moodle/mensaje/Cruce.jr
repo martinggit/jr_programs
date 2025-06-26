@@ -1,0 +1,66 @@
+public class Cruce {
+    const in N = 10; //Cada barco puede transportar 10 vehiculos
+    const int M = 50;
+    int cantVehiculosOrilla = 0;
+    int cantCruzados=0;
+
+    //Canales
+    private static op void llegaBarco();
+    private static op void llegaVehiculo();
+    private static op void carga();
+    private static op void mutex();
+    private static op void mutexVehiculos();
+    private static op void rampa(); //solo hay una rampa por lo que los demas barcos esperan
+    //Solo un barco a la vez puede cargar vehiculos
+
+    main{
+        send mutex(null);
+        send rampa(null);
+        send mutexVehiculos(null);
+    }
+
+    private process vehiculo [1..M]{
+        message msg;
+        while (true){
+            receive mutexVehiculos(msg);
+            if (cantVehiculosOrilla < N){
+                send llegaVehiculo(null); //si hay lugar en la orilla aviso que llegué
+            } 
+            send mutexVehiculos (null);
+        }
+    }
+    private process orilla{
+        message msg;
+        while (true){
+            receive llegaVehiculo(msg);
+            cantVehiculosOrilla++;
+
+            if (cantVehiculosOrilla >= N){
+                receive llegaBarco(msg);
+                receive rampa(msg);
+
+                send carga(null);
+                cantVehiculosOrilla-=N;
+
+                receive cruzoBarco();
+                send rampa(msg);
+            }
+        }
+    }
+    
+    private process barco [1..3]{
+        message msg;
+        while (true){
+            //aviso que llego a orilla
+            send llegaBarco (msg);
+            //espero que me carguen
+            receive carga(msg);
+            //cruzo y descargo
+            send cruzoBarco(null);
+            receive mutex(msg);
+                cantCruzados+=10;
+            send mutex(null);
+        }
+
+    }
+}

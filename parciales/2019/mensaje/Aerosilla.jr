@@ -1,0 +1,56 @@
+//PSEUDOCODIGO
+
+public class Aerosilla {
+    //variables
+    int N = 10; //cantidad de esquiadores
+    int M = 2; //cantidad de sillas
+    int lugares = 4;
+
+    int cantEsquiadores = 0; //contador de esquiadores en la silla de base
+
+    //Canales
+    private static op void puedeSubir(); 
+    private static op void mutex();
+    private static op void llegoEsquiador();
+
+    public static void main(String... args){
+    //Inicializar 
+        send(mutex,null);
+    }
+
+    private process esquiador[1..N]{
+    message msg;
+    int i;
+
+    while (true){
+        //HACER COLA
+        send(llegoEsquiador,null); 
+        receive(puedeSubir,msg);
+
+        receive(mutex,msg);
+            cantEsquiadores++;
+        send(mutex,msg);
+
+
+        receive()
+        
+        receive(mutex,msg);
+            cantEsquiadores--;
+        send(mutex,null);
+    }
+    }
+
+    private process silla[1..M]{
+    message msg;
+    while (true){
+        for (i=1; i < lugares; i++){ //espero que lleguen 4 esquiadores
+            receive (llegoEsquiador,msg);
+        }
+        //una vez está llena
+        for (i=1; i< lugares; i++){
+            send(puedeSubir,null);
+        }
+    }
+    }
+
+}

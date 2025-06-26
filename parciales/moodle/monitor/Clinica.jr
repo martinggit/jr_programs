@@ -1,0 +1,20 @@
+import edu.ucdavis.jr.JR;
+
+public class Clinica {
+    private static MonitorClinica monitor = new MonitorClinica("Monitor");
+    private static final int N =10; //Cnatidad de pacientes
+
+    private static process paciente((int i = 0; i <= N; i++)) {
+        monitor.esperarPaciente();
+        System.out.println("Paciente"+ i+ "es atendido");
+        monitor.finConsulta();  
+    }
+
+   private static process recepcion(){
+    while (true){
+        monitor.recepcionista();
+        System.out.println("Recepcion asigna un paciente");
+    }
+   }
+
+}

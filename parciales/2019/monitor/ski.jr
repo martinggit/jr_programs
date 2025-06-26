@@ -1,0 +1,21 @@
+
+public class ski {
+    private static final int N = 20; //Numero de esquiadores
+    private static final int R = 4; //numero de esq vip
+    private static MonitorSki prueba = new MonitorSki("Monitor"); //The monitor
+
+    public static void main(String... args){}
+
+    private static process esquiadorEstandar((int i = 0; i <= N; i++)){
+        prueba.accesoEstandar();
+        System.out.println("Esquiador Estandar esquia un momento y llega a base");
+        prueba.salidaEstandar();
+    }
+    
+    private static process esuiadorVip((int i=0; i<=R; i++)){
+        prueba.accesoVip();
+        System.out.println("Esquiador VIP esquia un momento y llega a base");
+        prueba.salidaVip();
+    }
+
+}
