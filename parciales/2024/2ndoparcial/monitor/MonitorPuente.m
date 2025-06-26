@@ -17,56 +17,65 @@ Acceso alternado: cuando terminan de cruzar los vehículos de un lado (o si no h
 Evitar inanición (opcional): si un lado siempre tiene autos, no debe bloquear indefinidamente al otro.
 */
 _monitor MonitorPuente {
+  //CUENTAN LOS AUTOS ESPERANDO DE CADA LADO
     _var int esperandoNorte = 0;
     _var int esperandoSur = 0;
+  //CUANTOS AUTOS ESTÁN CRUZANDO ACTUALMENTE (NUNCA MÁS DE N)
     _var int cruzando = 0;
+    //AUTOS QUE CRUZARON DURANTE ESTE TURNO(CUANDO LLEGA A N, SE CAMBIA DE LADO)
     _var int cantidadEnTurno =0;
-    _var String direccionActual = "";
+    //SENTIDO DEL CRUCE ACTUAL
+    _var String direccionActual = "norte";
+    //CAPACIDAD MAXIMA POR TURNO
     _var int N;
-
+    //CONDICIONES DE ESPERAR HASTA PODER CRUZAR
     _condvar puedeCruzarNorte;
     _condvar puedeCruzarSur;
 
     _proc void llegarNorte(){
         esperandoNorte++;
+        //ESPERO SI NO ES MI TURNO O SI YA SE LLEGÓ AL MAXIMO N CRUZANDO
         while (direccionActual != "norte" || cruzando >= N){
             _wait(puedeCruzarNorte);
         }
         esperandoNorte--;
+        //AL CRUZAR, DECREMENTO ESPERA E INCREMENTO CRUZANDO Y CANTIDADENTURNO
         cruzando++;
         cantidadEnTurno++;
     }
     
     _proc void salirNorte(){
-        cruzando--;
-        if (cruzando == 0 && (cantidadEnTurno >= N || esperandoNorte == 0) && esperandoSur > 0){
+        cruzando--;//DECREMENTO CRUZANDO
+        //CUANDO CRUZANDO == 0 Y SE COMPLETO EL TURNO >= N O NO QUEDAN MAS AUTOS DE MI LADO,
+        //CAMBIO DE DIRECCION Y RESETEO CANTIDADENTURNO.
+        if (cruzando == 0 && (cantidadEnTurno == N || esperandoNorte == 0) && esperandoSur > 0){
             direccionActual="sur";
             cantidadEnTurno=0;
             _signal_all(puedeCruzarSur);
-        } else {
+        } else if (esperandoNorte > 0){
             _signal(puedeCruzarNorte);
         }
     }
     
     _proc void llegarSur() {
-    esperandoSur++;
-    while (direccionActual != "sur" || cruzando >= N) {
-      _wait(puedeCruzarSur);
-    }
-    esperandoSur--;
-    cruzando++;
-    cantidadEnTurno++;
-    }
+      esperandoSur++;
+      while (direccionActual != "sur" || cruzando >= N) {
+        _wait(puedeCruzarSur);
+      }
+      esperandoSur--;
+      cruzando++;
+      cantidadEnTurno++;
+      }
 
   _proc void salirSur() {
-    cruzando--;
-    if (cruzando == 0 && (cantidadEnTurno >= N || esperandoSur == 0) && esperandoNorte > 0) {
-      direccionActual = "norte";
-      cantidadEnTurno = 0;
-      _signal_all(puedeCruzarNorte);
-    } else {
-      _signal(puedeCruzarSur);
+      cruzando--;
+      if (cruzando == 0 && (cantidadEnTurno >= N || esperandoSur == 0) && esperandoNorte > 0) {
+        direccionActual = "norte";
+        cantidadEnTurno = 0;
+        _signal_all(puedeCruzarNorte);
+      } else if (esperandoSur > 0) {
+        _signal(puedeCruzarSur);
+      }
     }
-  }
 
 }

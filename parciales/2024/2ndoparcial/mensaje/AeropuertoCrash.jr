@@ -9,12 +9,13 @@ public class Estacionamiento {
     private static op void pistaLibre();
     private static op void alarma();
     private static op void mutexAviones();
+    private static op void permisoLinea[N];
     
     public static void main(String... args){
         //Unica pista, 1 send
         send(pistaLibre,null);
         send(mutexAviones,null);
-        send(pistaLibre,null);
+
     }
 
     private process avion[1..M] {
@@ -29,7 +30,6 @@ public class Estacionamiento {
         send(alarma,msg);//Aviso que hay un avion esperando
 
         receive(permisoLinea[miLinea]); //Espero permiso del controlador
-
         receive(pistaLibre, msg);//Espero que este libre la unica pista
 
         //SIMULO DESPEGUE
@@ -60,13 +60,8 @@ public class Estacionamiento {
         }
         send(mutexAviones,null);
 
-        if (maxCant == 0)  break; //No hay más aviones -> duermo esperando
-
         //Hay almenos un avion -> doy permiso al de la cola más larga
         send(permisoLinea[maxCola]);
-
-        receive(pistaLibre,msg);//Espero que el avión despegue
-        send(pistaLibre,null);//Dejo disponible la pista para el siguiente avion
     }
     }
 }

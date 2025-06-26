@@ -22,20 +22,20 @@ public class Token {
     private process agente [1..N] {
     message msg;
     int sig = (i % N) +1; //agente siguiente (derecha)
-    int prev = (i -2 + N) % N +1; //agente anterior (izquierda)
 
     while (true){
-        //TENGO QUE RECIBIR LOS TOKENS DEL AGENTE A MI IZQUIERDA
-        receive(tokenUno[prev],msg);
-        receive(tokenDos[prev],msg);
+         // Espera tokens desde su canal
+            receive(tokenUno[i], msg);
+            receive(tokenDos[i], msg);
 
-        //UNA VEZ TENGO LOS TOKENS CUENTO LA ENTREGA
-        receive(mutexEntrega,msg);
-        entregaExitosa++;
-        send(mutexEntrega,null);
+            // Actualiza contador de entregas
+            receive(mutexEntrega, msg);
+            entregaExitosa++;
+            send(mutexEntrega, null);
 
-        send(tokenUno[sig],null);
-        send(tokenDos[sig],null);
+            // Envía tokens al agente a su derecha
+            send(tokenUno[sig], null);
+            send(tokenDos[sig], null);
     }
     }   
 }

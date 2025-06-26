@@ -79,7 +79,7 @@ public class JuegoAviones {
 
         while (true){
             receive(mutexCajas,msg);
-            int cajas = cajas_arrojadas;
+                int cajas = cajas_arrojadas;
             send(mutexCajas,null);
 
             receive(mutexDerribados, msg);
