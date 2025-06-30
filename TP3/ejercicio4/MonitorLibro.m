@@ -1,10 +1,10 @@
 _monitor MonitorLibro {
   // Inicializar variables locales
-  private int lectores = 0;
-  private int escritores = 0;
+  _var int lectores = 0;
+  _var int escritores= 0;
 
   // Recurso compartido
-  private String [] textos = {"Texto escrito 0", "Texto escrito 1", "Texto escrito 2", "Texto escrito 3"};
+  private String [] textos = {"Texto 0", "Texto 1", "Texto 2", "Texto 3"};
   private String texto = textos[0];
 
   // Variables de condición

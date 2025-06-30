@@ -31,7 +31,7 @@ _monitor Robot {
     _condvar puedoEntregarUrgente;
  
 
-    _proc void solicitudEstadar(){
+    _proc void robotEstadar(){
         estandarEsperando++
         while (estandarBuscando || urgenteBuscando || urgenteEsperando > 0){
             _wait(puedoBuscar);
@@ -63,7 +63,7 @@ _monitor Robot {
         }
     }
 
-    _proc void solicitudUrgente(){
+    _proc void robotUrgente(){
         urgenteEsperando++
         while (urgenteBuscando){
             _wait(puedoBuscarUrgente);

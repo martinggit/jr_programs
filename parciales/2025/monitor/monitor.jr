@@ -1,22 +1,37 @@
 public class monitor {
-    private static final int N = 3; // cantidad máxima de autos por turno
+    private static final A = 10; //CANTIDAD DE ROBOTS ESTANDAR
+    private static final B = 5; //CANTIDAD DE ROBOTS URGENTES
+    private static final C = 20; //CANTIDAD DE CLIENTES
+    boolean urgente;
+
     private static Robot monitor = new Robot("Programa Robot Estandar/Urgente");
 
     
-    private static process solicitudEstandar((int i = 0; i < 10; i++)) {
+    private static process robotEstandar((int i = 0; i < A; i++)) {
         while (true) {
-        monitor.solicitudEstandar();
+        monitor.robotEstandar();
         System.out.println("Solicitud Estandar");
         monitor.finalizarEstandar();
         }
     }
 
     
-    private static process solicitudUrgente((int i = 0; i < 5; i++)) {
+    private static process robotUrgente((int i = 0; i < B; i++)) {
         while (true) {
-            monitor.solicitudUrgente();
+            monitor.robotUrgente();
             System.out.println("Solicitud Urgente");
             monitor.finalizarUrgente();
+        }
+    }
+
+    private static process cliente((int i = 0; i < C; i++)){
+        while(true){
+            //random estandar/urgente
+            urgente = random (true,false); //determino si es urgente o no
+            if (urgente){ 
+                robotUrgente[i]();// si soy urgente invoco al robot con sus funciones de urgente
+            } else 
+                robotEstandar[i](); //si soy estandar invoco al robot estandar
         }
     }
 

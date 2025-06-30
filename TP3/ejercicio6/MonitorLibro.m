@@ -6,7 +6,7 @@ _monitor MonitorLibro {
   //de los escritores que quieren escribir pero no estan activos
 
   // Recurso compartido
-  private String [] textos = {"Texto escrito 0", "Texto escrito 1", "Texto escrito 2", "Texto escrito 3"};
+  private String [] textos = {"Texto 0", "Texto 1", "Texto 2", "Texto 3"};
   private String texto = textos[0];
 
   // Variables de condición
