@@ -1,0 +1,27 @@
+public class monitor {
+    private static final int N = 3; // cantidad máxima de autos por turno
+    private static Robot monitor = new Robot("Programa Robot Estandar/Urgente");
+
+    
+    private static process solicitudEstandar((int i = 0; i < 10; i++)) {
+        while (true) {
+        monitor.solicitudEstandar();
+        System.out.println("Solicitud Estandar");
+        monitor.finalizarEstandar();
+        }
+    }
+
+    
+    private static process solicitudUrgente((int i = 0; i < 5; i++)) {
+        while (true) {
+            monitor.solicitudUrgente();
+            System.out.println("Solicitud Urgente");
+            monitor.finalizarUrgente();
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("");
+    }
+
+}

@@ -1,0 +1,97 @@
+/*
+Múltiples sensores climáticos en diferentes ubicaciones envían datos climáticos tales como temperatura, presión, humedad a un procesador central de datos. 
+Si el procesador central detecta condiciones de tormenta, envía un mensaje Alerta Tormenta a la estación más cercana. 
+Esta más cercana retransmite a la próxima mas cercana y así sucesivamente y cada estacion debe enviar un aviso de alerta retransmitida de vuelta al procesador central. 
+Se sabe que la cercania de las estaciones es en orden decreciente al procesador central. 
+Hay que tener en cuenta que el procesador central no puede emitir una nueva alerta de tormenta hasta que haya recibido el alerta retransmitido de todas las estaciones de radio. 
+Se debe llevar un contador global de alertas críticas retransmitidas con éxito. 
+Usted debera resolver este problema utilizando pasaje de mensajes. 
+Especifique los supuestos que asuma.
+
+*/
+
+//PSEUDOCODIGO
+//SUPUESTOS:
+/*
+-Cada estación tiene un sensor que le envía datos a la central
+-Van de 10 (más cerca) a 1
+-La central recibe todos los datos de los sensores antes de evaluar alerta
+-Envio una nueva alerta si recibi las retransmisiones de todas las estaciones
+ */
+
+public class mensaje{
+    const int N=10;//10 sensores y estaciones
+    int alertasExitosas = 0;
+    
+    //Canales 
+    private static op void humedad[1..N]();
+    private static op void temperatura[1..N]();
+    private static op void presion[1..N]();
+
+    private static op void mutex(); //Para contar la cantidad de alertas criticas recibidas por la central de datos 
+    private static op void retransmision[1..N](); //Canal de para cada una de las estaciones.
+    private static op void alertaTormenta[1..N](); 
+    
+    main{
+        send mutex(null);
+       
+        for (i=1; i <= N; i++){
+            new sensor[i];
+        }
+        for (int i = 1; i<= M; i++){
+            new estacion[i];
+        }
+
+        new centralDeDatos;
+    }
+
+
+    private process sensor [1.. N]{
+        message temp,hum,pres;
+        while(true){
+            send(temperatura[i],msg);
+            send(humedad[i],msg);
+            send(presion[i],msg);
+        }
+    }
+
+    private process estacion [1..N]{
+        message msg;
+
+        while (true){
+            receive(alertaTormenta[i],msg);
+            
+            //si no soy la más lejana (1), retransmito al siguiente
+            if (i > 1){
+                send(alertaTormenta[i-1],msg);
+            }
+            send(retransmision[i],msg);
+        }
+    }
+    private process centralDeDatos{
+        message msg;
+        while (true){
+            //Recibo datos de los sensores desde el 10 al 1
+           for (int i = N; i >= 1; i--){
+                receive temperatura[i](msg);
+                receive humedad[i](msg);
+                receive presion[i](msg);
+            }
+
+            if (detectoCondicionesTormenta()){
+                //Envío alerta a la estación más cercana
+                send(alertaTormenta[N], msg);
+
+                //Espero confirmaciones de las estaciones en orden decreciente
+                for (int i=N; i>= 1; i--){
+                    receive(retransmision[i],msg);
+                }
+
+                //Incremento contador
+                receive (mutex,msg);
+                alertasExitosas++;
+                send(mutex,null);
+            }
+        }
+    }
+}
