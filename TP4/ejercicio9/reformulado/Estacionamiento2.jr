@@ -1,0 +1,96 @@
+public class Estacionamiento2 {
+
+    private static final int N = 5;       // Lugares por piso
+    private static final int M = 20;      // Cantidad total de vehículos
+
+    // Contadores de vehículos por piso
+    private static int cant_PB = 0;
+    private static int cant_1P = 0;
+
+    // Canales para sincronización
+    private static op void puertaLibre(String);      // Exclusión para puerta
+    private static op void totalDisponible(String);  // Lugares totales disponibles
+    private static op void mutexPB(String);          // Exclusión PB
+    private static op void mutex1P(String);          // Exclusión 1P
+
+    public static void main(String[] args) {
+        // Inicialización de recursos
+
+        // La puerta empieza libre
+        send puertaLibre("libre");
+
+        // Mutex por piso (una vez cada uno)
+        send mutexPB("libre");
+        send mutex1P("libre");
+
+        // Lugares disponibles en total: 2*N
+        for (int i = 0; i < 2 * N; i++) {
+            send totalDisponible("lugar");
+        }
+    }
+
+    private process vehiculo((int i = 0; i < M; i++)) {
+        String msg;
+
+        try {
+            // Espera un tiempo aleatorio antes de intentar entrar
+            Thread.sleep((int)(Math.random() * 3000));
+        } catch (InterruptedException e) {}
+
+        receive totalDisponible(msg);   // Verifica lugar total
+        receive puertaLibre(msg);       // Exclusión para usar la puerta
+
+        // INTENTO EN PB
+        receive mutexPB(msg);
+        if (cant_PB < N) {
+            cant_PB++;
+            System.out.println(">>> Vehículo " + id + " estaciono en PB. Ocupados PB: " + cant_PB);
+            send mutexPB("libre");
+
+            send puertaLibre("libre"); // Libera puerta
+
+            // Tiempo estacionado
+            esperarTiempo();
+
+            receive puertaLibre(msg); // Para salir
+            System.out.println("<<< Vehiculo " + id + " sale desde PB");
+            receive mutexPB(msg);
+            cant_PB--;
+            send mutexPB("libre");
+            send puertaLibre("libre");
+        } else {
+            // No hay lugar en PB → libero mutex
+            send mutexPB("libre");
+
+            // INTENTO EN 1P
+            receive mutex1P(msg);
+            if (cant_1P < N) {
+                cant_1P++;
+                System.out.println(">>> Vehiculo " + id + " estaciono en 1P. Ocupados 1P: " + cant_1P);
+                send mutex1P("libre");
+
+                send puertaLibre("libre"); // Libera puerta
+
+                esperarTiempo();
+
+                receive puertaLibre(msg); // Para salir
+                System.out.println("<<< Vehiculo " + id + " sale desde 1P");
+                receive mutex1P(msg);
+                cant_1P--;
+                send mutex1P("libre");
+                send puertaLibre("libre");
+            } else {
+                System.out.println("XXX Vehiculo " + id + " no pudo estacionar. Esto no deberia pasar.");
+            }
+        }
+
+        // Libera lugar total
+        send totalDisponible("libre");
+    }
+
+    private void esperarTiempo() {
+        try {
+            Thread.sleep(1000 + (int)(Math.random() * 3000));
+        } catch (InterruptedException e) {}
+    }
+}

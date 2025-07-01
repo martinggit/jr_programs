@@ -1,0 +1,83 @@
+/*
+MAILBOX: Implementado con LinkedList<String>, simula cola FIFO
+sendMessage, no bloqueante, descarta si el buffer está lleno
+receiveMessage, bloqueante hasta que haya un mensaje diponible
+Cola FIFO, implementada con addLast() y removeFirst()
+¿Distribuido? NO
+*/
+
+import edu.ucdavis.jr.JR;
+import java.util.LinkedList;
+
+public class pasajeMensajes{
+
+private static final int TAM_BUFFER = 5;
+
+    // Mailbox compartido
+    private static LinkedList mailbox = new LinkedList();
+
+    // Semáforos
+    private static sem mutex = 1;         // exclusión mutua
+    private static sem lleno = 0;         // cantidad de mensajes en el buffer
+
+    //send No bloqueante
+    public static void sendMessage(String msg) {
+        P(mutex);
+        if (mailbox.size() < TAM_BUFFER) {
+            mailbox.addLast(msg); // FIFO
+            V(lleno); // Aviso que hay un nuevo mensaje
+        } else {
+            System.out.println("Buffer lleno. Mensaje descartado: " + msg);
+        }
+        V(mutex);
+    }
+
+    //receive bloqueante
+    public static String receiveMessage() {
+        String msg = null;
+        P(lleno);   // espera si está vacío
+        P(mutex);
+        if (!mailbox.isEmpty()) {
+            msg = (String) mailbox.removeFirst(); // FIFO
+        }
+        V(mutex);
+        return msg;
+    }
+
+    private static final int EMISORES = 3;
+    private static final int RECEPTORES = 2;
+
+    //Emisores generan mensajes con su id
+    //Cuando el buffer está lleno, los mensajes se descartan 
+    private static process Emisor((int i = 0; i < EMISORES; i++)) {
+        while (true) {
+            String mensaje = "Mensaje de Emisor " + i;
+            sendMessage(mensaje);
+            System.out.println("Emisor " + i + " envio: " + mensaje);
+             try {
+                Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                e.printStackTrace();
+            } // simula tiempo de trabajo
+        }
+    }
+
+   //Los receptores consumen msgs en orden FIFO 
+   //Reciben correctamente los mensajes y los imprimen
+    private static process Receptor((int i = 0; i < RECEPTORES; i++)) {
+        while (true) {
+            String recibido = receiveMessage();
+            System.out.println("Receptor " + i + " recibio: " + recibido);
+             try {
+                Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                e.printStackTrace();
+            } // simula tiempo de procesamiento
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println("---- Sistema de mensajes con Mailboxes ----");
+    }
+
+}
