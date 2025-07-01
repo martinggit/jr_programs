@@ -1,0 +1,23 @@
+public class Pizzeria {
+
+  private static MonitorPizeria monitor = new MonitorPizeria("Monitor Pizeria"); 
+
+  private static process Pizzero() {
+    while (true){
+      monitor.prepararMasa();
+    }
+  }
+
+  private static process Cocineros((for int i= 0; i < 3; i++)){
+    int ingredienteId=i;
+    while (true){
+      monitor.agregarIngediente(ingredienteId);
+    }
+  }
+
+  public static void main(String [] args) {
+    System.out.println("-----Problema de la pizzeria con Monitor-----");
+  }
+
+}
+
